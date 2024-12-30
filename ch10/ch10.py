@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from packaging import version
+
 import sys
 from python_environment_check import check_packages
 from sklearn.datasets import make_blobs
@@ -14,6 +14,7 @@ from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage
 from scipy.cluster.hierarchy import dendrogram
 # from scipy.cluster.hierarchy import set_link_color_palette
+from packaging import version
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.datasets import make_moons
 from sklearn.cluster import DBSCAN

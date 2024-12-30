@@ -34,6 +34,7 @@ sys.path.insert(0, '..')
 d = {
     'numpy': '1.21.2',
     'scipy': '1.7.0',
+    'sklearn': '1.0.0',
     'matplotlib': '3.4.3',
     'torch': '1.9.0',
 }
@@ -203,13 +204,13 @@ print('Final Parameters:', model.weight.item(), model.bias.item())
 X_test = np.linspace(0, 9, num=100, dtype='float32').reshape(-1, 1)
 X_test_norm = (X_test - np.mean(X_train)) / np.std(X_train)
 X_test_norm = torch.from_numpy(X_test_norm)
-y_pred = model(X_test_norm).detach().numpy()
+y_pred = model(X_test_norm)
 
 
 fig = plt.figure(figsize=(13, 5))
 ax = fig.add_subplot(1, 2, 1)
-plt.plot(X_train_norm, y_train, 'o', markersize=10)
-plt.plot(X_test_norm, y_pred, '--', lw=3)
+plt.plot(X_train_norm.detach().numpy(), y_train.detach().numpy(), 'o', markersize=10)
+plt.plot(X_test_norm.detach().numpy(), y_pred.detach().numpy(), '--', lw=3)
 plt.legend(['Training examples', 'Linear reg.'], fontsize=15)
 ax.set_xlabel('x', size=15)
 ax.set_ylabel('y', size=15)
@@ -511,11 +512,6 @@ IPythonImage(filename='figures/12_11.png', width=500)
 # ---
 # 
 # Readers may ignore the next cell.
-
-
-
-
-
 
 
 

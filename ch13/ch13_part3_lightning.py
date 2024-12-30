@@ -1,13 +1,13 @@
 # coding: utf-8
 
 
-from pkg_resources import parse_version
 import sys
 from python_environment_check import check_packages
 import pytorch_lightning as pl
 import torch 
 import torch.nn as nn 
 from torchmetrics import __version__ as torchmetrics_version
+from pkg_resources import parse_version
 from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
@@ -69,13 +69,13 @@ check_packages(d)
 
 
 
+
 class MultiLayerPerceptron(pl.LightningModule):
     def __init__(self, image_shape=(1, 28, 28), hidden_units=(32, 16)):
         super().__init__()
         
         # new PL attributes:
-        
-        if parse_version(torchmetrics_version) > parse_version(0.8):
+        if parse_version(torchmetrics_version) > parse_version("0.8"):
             self.train_acc = Accuracy(task="multiclass", num_classes=10)
             self.valid_acc = Accuracy(task="multiclass", num_classes=10)
             self.test_acc = Accuracy(task="multiclass", num_classes=10)
@@ -109,23 +109,35 @@ class MultiLayerPerceptron(pl.LightningModule):
         self.log("train_loss", loss, prog_bar=True)
         return loss
 
-    def training_epoch_end(self, outs):
-        self.log("train_acc", self.train_acc.compute())
-        self.train_acc.reset()
-    
-    def validation_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self(x)
-        loss = nn.functional.cross_entropy(logits, y)
-        preds = torch.argmax(logits, dim=1)
-        self.valid_acc.update(preds, y)
-        self.log("valid_loss", loss, prog_bar=True)
-        return loss
-    
-    def validation_epoch_end(self, outs):
-        self.log("valid_acc", self.valid_acc.compute(), prog_bar=True)
-        self.valid_acc.reset()
+    # Conditionally define epoch end methods based on PyTorch Lightning version
+    if parse_version(pl.__version__) >= parse_version("2.0"):
+        # For PyTorch Lightning 2.0 and above
+        def on_training_epoch_end(self):
+            self.log("train_acc", self.train_acc.compute())
+            self.train_acc.reset()
 
+        def on_validation_epoch_end(self):
+            self.log("valid_acc", self.valid_acc.compute())
+            self.valid_acc.reset()
+
+        def on_test_epoch_end(self):
+            self.log("test_acc", self.test_acc.compute())
+            self.test_acc.reset()
+
+    else:
+        # For PyTorch Lightning < 2.0
+        def training_epoch_end(self, outs):
+            self.log("train_acc", self.train_acc.compute())
+            self.train_acc.reset()
+
+        def validation_epoch_end(self, outs):
+            self.log("valid_acc", self.valid_acc.compute())
+            self.valid_acc.reset()
+
+        def test_epoch_end(self, outs):
+            self.log("test_acc", self.test_acc.compute())
+            self.test_acc.reset()
+    
     def test_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
@@ -279,6 +291,11 @@ model = MultiLayerPerceptron.load_from_checkpoint(path)
 # ---
 # 
 # Readers may ignore the next cell.
+
+
+
+
+
 
 
 

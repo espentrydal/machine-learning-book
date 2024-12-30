@@ -319,7 +319,8 @@ X, y = iris.data[50:, [1, 2]], iris.target[50:]
 le = LabelEncoder()
 y = le.fit_transform(y)
 
-X_train, X_test, y_train, y_test =       train_test_split(X, y, 
+X_train, X_test, y_train, y_test =\
+       train_test_split(X, y, 
                         test_size=0.5, 
                         random_state=1,
                         stratify=y)
@@ -388,7 +389,8 @@ for clf, label in zip(all_clf, clf_labels):
 
 colors = ['black', 'orange', 'blue', 'green']
 linestyles = [':', '--', '-.', '-']
-for clf, label, clr, ls         in zip(all_clf,
+for clf, label, clr, ls \
+        in zip(all_clf,
                clf_labels, colors, linestyles):
 
     # assuming the label of the positive class is 1
@@ -591,7 +593,8 @@ X = df_wine[['Alcohol', 'OD280/OD315 of diluted wines']].values
 le = LabelEncoder()
 y = le.fit_transform(y)
 
-X_train, X_test, y_train, y_test =            train_test_split(X, y, 
+X_train, X_test, y_train, y_test =\
+            train_test_split(X, y, 
                              test_size=0.2, 
                              random_state=1,
                              stratify=y)
@@ -857,7 +860,7 @@ plt.show()
 
 
 
-# ## Using XGboost 
+# ## Using XGBoost 
 
 
 
